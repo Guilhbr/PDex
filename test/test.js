@@ -10,6 +10,7 @@ const raltsDesc = 'RALTS senses the emotions of people using the horns on its he
 const translatedRalts = "Ralts senses the emotions of people using the horns on its headeth. This pokémon rarely appears ere people. But at which hour 't doest,  't draws closer if 't be true 't senses yond the person hath a positive disposition."
 
 describe('Get Pokemon', function () {
+
   it('should return an object with the pokemon name and translated description', function(done) {
     chai.request(server)
       .get('/ralts')
@@ -26,6 +27,7 @@ describe('Get Pokemon', function () {
         done()
       })
   })
+
   it('should not be case sensitive', function(done) {
     chai.request(server)
       .get('/rALtS')
@@ -42,6 +44,7 @@ describe('Get Pokemon', function () {
         done()
       })
   })
+
   it('should be able to find pokemon using their pokedex number', function(done) {
     chai.request(server)
       .get('/280')
@@ -58,6 +61,7 @@ describe('Get Pokemon', function () {
         done()
       })
   })
+
   it('should return an error when an invalid name is used', function(done) {
     chai.request(server)
       .get('/joey')
@@ -66,4 +70,5 @@ describe('Get Pokemon', function () {
         done()
       })
   })
+
 })
