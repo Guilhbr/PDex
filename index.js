@@ -15,4 +15,4 @@ app.get('/', (req, res) => {
 
 app.get('/:name', api.getPokemon)
 
-app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
+module.exports = app.listen(port, () => console.log(`App listening at http://localhost:${port}`))

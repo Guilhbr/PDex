@@ -29,6 +29,6 @@ exports.getPokemon = async (req, res, next) => {
     try {
       pokemon.description = await getTranslation(pokemon.description, next)
       res.send(pokemon)
-    } catch(error) { next(error) }
-  } catch (error) { next(error) }
+    } catch(error) { res.status(error.response.status).send('Error translating description.') }
+  } catch (error) { res.status(error.response.status).send('Error finding pokemon.') }
 }
