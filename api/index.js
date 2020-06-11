@@ -6,33 +6,29 @@ function findAndSanitizeEntry(entries) {
   return flavor = entry['flavor_text'].replace(/\n|\f/g, ' ')
 }
 
-exports.getPokemon = function (req, res) {
-  axios(`https://pokeapi.co/api/v2/pokemon-species/${req.params.name}`)
+function getPokemonDesc (name) {
+  return axios(`https://pokeapi.co/api/v2/pokemon-species/${name}`)
     .then(response => {
-      if (response.data) {
-        var output = {name: response.data.name}
-        const description = findAndSanitizeEntry(response.data.flavor_text_entries)
-        output.description = description
-        res.send(output)
-        // axios.post('https://api.funtranslations.com/translate/shakespeare.json',
-        //     {text: flavor}
-        // ).then(newText => {
-        //     if (newText.data) {
-        //         const finalDesc = newText.data.contents.translated
-        //         output.description = finalDesc
-        //         console.log(newText.data)
-        //         console.log(output)
-        //         res.send(output)
-        //     }
-        // })
-        // .catch(err => {
-        //     console.log(err)
-        //     res.send(flavor)
-        // })
-    } else res.send('Pokemon not found')
+      const description = findAndSanitizeEntry(response.data.flavor_text_entries)
+      return {name: response.data.name, description}
+    })
+}
+
+function getTranslation (desc) {
+  return axios.post('https://api.funtranslations.com/translate/shakespeare.json',
+    {text: desc}
+  ).then(response => {
+    return response.data.contents.translated
   })
-  .catch(err => {
-    console.log(err)
-    res.send('Pokemon not found')
-  })
+}
+
+exports.getPokemon = async (req, res, next) => {
+  const name = req.params.name.toLowerCase()
+  try {
+    let pokemon = await getPokemonDesc(name, next)
+    try {
+      pokemon.description = await getTranslation(pokemon.description, next)
+      res.send(pokemon)
+    } catch(error) { next(error) }
+  } catch (error) { next(error) }
 }
